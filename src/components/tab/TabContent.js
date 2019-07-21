@@ -4,7 +4,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import { EntypoCheck } from "react-entypo-icons";
 
-import { ListTitle, ListText } from "./Text";
+import { ListTitle, ListText } from "../Text";
 
 class TabContent extends React.Component {
   constructor(props) {

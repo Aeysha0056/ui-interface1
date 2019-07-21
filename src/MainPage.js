@@ -4,7 +4,7 @@ import { inject, observer } from "mobx-react";
 import Draw from "./components/draw/draw";
 import Crop from "./components/crop/crop";
 import { draw } from "./components/draw/addCropMethod";
-import Tabs from "./components/Tabs";
+import Tabs from "./components/tab/Tabs";
 import { OptionText } from "./components/Text";
 import "./styles/MainPage.css";
 
@@ -16,7 +16,8 @@ class Main extends React.Component {
     super(props);
 
     this.state = {
-      image: ""
+      image: "",
+      ...props
     };
   }
 
@@ -26,8 +27,8 @@ class Main extends React.Component {
 
   keyHandler = e => {
     if (e.key === "Escape") {
-      if (this.props.drawing.state.draw)
-        this.props.drawing.setState({ draw: false });
+      if (this.state.drawing.state.draw)
+        this.state.drawing.setState({ draw: false });
     }
   };
 
@@ -40,15 +41,14 @@ class Main extends React.Component {
   };
 
   selectOption = option => {
-    let isDynamic = option === "dynamic";
-    this.setState({ isDynamic });
-    let selectedCrop = this.props.store.selected;
-    this.props.store.update(selectedCrop, "crop", { type: option });
+    let selectedCrop = this.state.store.selected;
+    this.state.store.update(selectedCrop, "crop", { type: option });
   };
 
   render() {
-    let { state } = this.props.drawing;
-    let selected = this.props.store.components[this.props.store.selected]
+    let state = this.props.drawing.state;
+    let { selectedCrop } = this.state;
+    let selected = this.state.store.components[this.state.store.selected];
 
     return (
       <div
@@ -62,12 +62,12 @@ class Main extends React.Component {
             <OptionText text="NewCrop" onClick={() => draw("")} />
             <OptionText
               text="Dynamic"
-              isSelected={selected && selected.crop.type === "dynamic"}
+              isSelected={selectedCrop && selectedCrop.crop.type === "dynamic"}
               onClick={() => this.selectOption("dynamic")}
             />
             <OptionText
               text="Fixed"
-              isSelected={selected && selected.crop.type === "fixed"}
+              isSelected={selectedCrop && selectedCrop.crop.type === "fixed"}
               onClick={() => this.selectOption("fixed")}
             />
 
@@ -86,6 +86,7 @@ class Main extends React.Component {
               <img src={this.state.image} alt="img" className="border" />
             )}
           </div>
+
           <div className={state.draw === true ? "App draw" : "App"}>
             <Draw
               h={state.h + "px"}
@@ -95,10 +96,16 @@ class Main extends React.Component {
               show={state.show}
             />
 
-            {Object.keys(this.props.store.components).map(key => {
-              let item = this.props.store.components[key];
+            {Object.keys(this.state.store.components).map(key => {
+              let item = this.state.store.components[key];
 
-              return <Crop id={item.id} key={item.id} />;
+              return (
+                <Crop
+                  id={item.id}
+                  key={item.id}
+                  onClick={() => this.setState({ selectedCrop: item })}
+                />
+              );
             })}
           </div>
         </div>

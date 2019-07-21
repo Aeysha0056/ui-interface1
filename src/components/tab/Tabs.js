@@ -2,9 +2,9 @@ import React from "react";
 import _ from "lodash";
 
 import TabContent from "./TabContent";
-import { TabText } from "./Text";
-import data from "../dummyData.json";
-import "../styles/MainPage.css";
+import { TabText } from "../Text";
+import data from "../../dummyData.json";
+import "../../styles/MainPage.css";
 
 class TabBar extends React.Component {
   constructor(props) {

@@ -55,7 +55,7 @@ class Crop extends React.PureComponent {
     let selected = comp.selected;
 
     return (
-      <div style={style}>
+      <div style={style} onClick={this.props.onClick}>
         <div
           ref={this.container}
           style={{

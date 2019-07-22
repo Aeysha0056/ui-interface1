@@ -3,7 +3,6 @@ import _ from "lodash";
 
 import TabContent from "./TabContent";
 import { TabText } from "../Text";
-import data from "../../dummyData.json";
 import "../../styles/MainPage.css";
 
 class TabBar extends React.Component {
@@ -16,9 +15,7 @@ class TabBar extends React.Component {
   }
 
   componentWillMount() {
-    // this.getTabsInfo();
-    let tabs = data.tabs
-    this.arrayHandler(tabs)
+    this.getTabsInfo();
   }
 
   getTabsInfo = () => {
@@ -29,13 +26,13 @@ class TabBar extends React.Component {
         {
           tabs { name
             section { name type
-              values { name view { type values } }
+              values { name view { values } }
             }
           }
         }`
     };
 
-    fetch("http://127.0.0.1:5000/graphql", {
+    fetch("http://192.168.137.1:5000/graphql", {
       method: "POST",
       body: JSON.stringify(requestBody),
       headers: {
@@ -75,7 +72,7 @@ class TabBar extends React.Component {
           let view = value.view.values.map(view => {
             return { name: view, clicked: false };
           });
-          return { ...value, view, type: value.view.type, clicked: false };
+          return { ...value, view, clicked: false };
         } else {
           return { ...value, clicked: false };
         }

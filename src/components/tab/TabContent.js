@@ -1,22 +1,90 @@
 import React from "react";
+import { inject, observer } from "mobx-react";
+import { EntypoCheck } from "react-entypo-icons";
+import _ from "lodash";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import { EntypoCheck } from "react-entypo-icons";
 
 import { ListTitle, ListText } from "../Text";
 
+@inject("store")
+@inject("drawing")
+@observer
 class TabContent extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {};
+    this.state = {
+      ...props
+    };
   }
 
   componentWillReceiveProps(nextProps) {
     let { section } = nextProps.selectedTab;
-    this.setState({ section, secondryList: null });
+    this.sectionDataHandler(section);
   }
+
+  /**
+   * display the section content based on the selected crop
+   *
+   * @param  {Object} section
+   */
+  sectionDataHandler = section => {
+    let { store, selectedTab } = this.state;
+
+    // no selected crop
+    if (!store.selected) {
+      this.setState({ section, secondryList: null });
+      return;
+    }
+
+    let selectedCropComp = store.components[store.selected];
+    let data = selectedCropComp.data
+      ? selectedCropComp.data[section.name]
+      : null;
+
+    if (section.name === "state") {
+      section.clicked = data ? data : false;
+      this.setState({ section });
+      return;
+    }
+
+    let values = section.values;
+    for (var i = 0; i < values.length; i++) {
+      // no prev data
+      if (!data) {
+        values[i].clicked = false;
+        continue;
+      }
+
+      // main list update
+      if (section.type === "single") {
+        values[i].clicked = values[i].name === data.name;
+
+      } else {
+        let index = data.findIndex(item => item.name === values[i].name);
+        values[i].clicked = index !== -1;
+      }
+
+      // secondryList update
+      if (!values[i].view) continue;
+
+      for (var j = 0; j < values[i].view.length; j++) {
+        let a = data.find(item => item.name === values[i].name);
+
+        if (!a || !a.view) {
+          values[i].view[j].clicked = false;
+
+        } else {
+          values[i].view[j].clicked = a.view === values[i].view[j].name;
+        }
+      }
+    }
+
+    section.values = values;
+    this.setState({ section, secondryList: null });
+  };
 
   /**
    * mark the selected item as clicked
@@ -26,17 +94,58 @@ class TabContent extends React.Component {
    * @param  {Number} index
    */
   mainListHandler = (item, index) => {
-    let { section, secondryList } = this.state;
+    let { section, secondryList, store } = this.state;
+    let selectedCropId = store.selected;
+    let selectedCropComp = store.components[selectedCropId];
+    let name = section.name;
+
+    if (!selectedCropId) {
+      alert("Please select a crop!");
+      return;
+    }
 
     if (section.type === "single") {
       // only mark the selected item as clicked
       section.values.map((value, i) => {
-        value.clicked = (i === index);
+        value.clicked = i === index;
         return { ...value };
       });
+
+      this.state.store.update(selectedCropId, "data", {
+        [name]: { name: item.name }
+      });
+
     } else {
       // mark the item as cheacked
       section.values[index].clicked = !section.values[index].clicked;
+
+      if (section.values[index].clicked) {
+
+        // insert item
+        if (selectedCropComp.data && selectedCropComp.data[name]) {
+          this.state.store.update(selectedCropId, "data", {
+            [name]: [...selectedCropComp.data[name], { name: item.name }]
+          });
+
+        } else {
+          this.state.store.update(selectedCropId, "data", {
+            [name]: [{ name: item.name }]
+          });
+        }
+
+      } else {
+        // remove item from main list
+        let data = selectedCropComp.data[name];
+        _.remove(data, n => n.name === item.name);
+        this.state.store.update(selectedCropId, "data", {
+          [name]: data
+        });
+        
+        // clear the secondryList
+        _.forEach(item.view, i => {
+          i.clicked = false;
+        });
+      }
     }
 
     // update the secondry list
@@ -50,52 +159,53 @@ class TabContent extends React.Component {
   };
 
   /**
-   *  mark the selected item as clicked
-   *  in secondryList
+   *  mark the selected item as clicked in secondryList
    *
    * @param  {Object} item
    * @param  {Number} index
    */
   updateSecondryList = (item, index) => {
-    let { secondryList } = this.state;
+    let { secondryList, store, section } = this.state;
+    let selectedCropId = store.selected;
+    let selectedCropComp = store.components[selectedCropId];
 
-    if (secondryList.type === "single") {
-      // only mark the selected item as clicked
-      let view = secondryList.view.map((view, i) => {
-        view.clicked = (i === index);
-        return { ...view };
+    // mark the selected item as clicked
+    let view = secondryList.view.map((view, i) => {
+      view.clicked = i === index;
+      return { ...view };
+    });
+    secondryList.view = view;
+
+    // find selected crop data
+    let a = selectedCropComp.data[section.name];
+    if (section.type === "single") {
+      this.state.store.update(selectedCropId, "data", {
+        [section.name]: {
+          name: secondryList.name,
+          view: secondryList.view[index].name
+        }
       });
-      secondryList.view = view;
+
     } else {
-      // mark the item as cheacked
-      secondryList.view[index].clicked = !secondryList.view[index].clicked;
+      let i = a.findIndex(item => item.name === secondryList.name);
+      a[i] = { name: secondryList.name, view: secondryList.view[index].name };
+      this.state.store.update(selectedCropId, "data", {
+        [section.name]: a
+      });
     }
 
     this.setState({ secondryList });
   };
 
-  /**
-   * update the selectedItem checkbox state
-   *
-   * @param  {String} listName    - mainList or secondryList
-   * @param  {Object} selectedItem
-   * @param  {Number} index
-   */
-  handleCheckBoxChanges = (listName, selectedItem, index) => {
-    let { section, secondryList } = this.state;
-    if (listName === "mainList") {
-      section.values[index].clicked = !selectedItem.clicked;
-      this.setState({ section });
-    } else {
-      secondryList.view[index].clicked = !selectedItem.clicked;
-      this.setState({ secondryList });
-    }
-  };
-
   hasState = () => {
-    let { section } = this.state;
+    let { section, store } = this.state;
     section.clicked = !section.clicked;
     this.setState({ section });
+
+    let selectedCropId = store.selected;
+    this.state.store.update(selectedCropId, "data", {
+      state: section.clicked
+    });
   };
 
   render() {
@@ -127,9 +237,7 @@ class TabContent extends React.Component {
                 index={i}
                 item={item}
                 onClick={() => this.mainListHandler(item, i)}
-                handleCheckBoxChanges={() =>
-                  this.handleCheckBoxChanges("mainList", item, i)
-                }
+                handleCheckBoxChanges={() => this.mainListHandler(item, i)}
               />
             ))}
           </List>
@@ -146,13 +254,11 @@ class TabContent extends React.Component {
               {secondryList.view.map((item, i) => (
                 <Item
                   key={i}
-                  type={secondryList.type}
                   index={i}
                   item={item}
+                  type="single"
                   onClick={() => this.updateSecondryList(item, i)}
-                  handleCheckBoxChanges={() =>
-                    this.handleCheckBoxChanges("secondryList", item, i)
-                  }
+                  handleCheckBoxChanges={() => this.updateSecondryList(item, i)}
                 />
               ))}
             </List>

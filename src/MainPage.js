@@ -11,6 +11,7 @@ import "./styles/MainPage.css";
 @inject("store")
 @inject("drawing")
 @observer
+
 class Main extends React.Component {
   constructor(props) {
     super(props);

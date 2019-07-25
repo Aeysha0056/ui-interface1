@@ -104,6 +104,11 @@ class TabContent extends React.Component {
       return;
     }
 
+    if (selectedCropComp.crop.type === "") {
+      alert("Please first select if a crop dynamic or fixed?");
+      return;
+    }
+
     if (section.type === "single") {
       // only mark the selected item as clicked
       section.values.map((value, i) => {
@@ -140,7 +145,7 @@ class TabContent extends React.Component {
         this.state.store.update(selectedCropId, "data", {
           [name]: data
         });
-        
+
         // clear the secondryList
         _.forEach(item.view, i => {
           i.clicked = false;
@@ -156,6 +161,7 @@ class TabContent extends React.Component {
     }
 
     this.setState({ secondryList, section });
+    this.sendData()
   };
 
   /**
@@ -195,6 +201,7 @@ class TabContent extends React.Component {
     }
 
     this.setState({ secondryList });
+    this.sendData()
   };
 
   hasState = () => {
@@ -206,7 +213,30 @@ class TabContent extends React.Component {
     this.state.store.update(selectedCropId, "data", {
       state: section.clicked
     });
+    this.sendData()
   };
+
+  /**
+   * send store data to db
+   */
+  sendData = () => {
+    let { store } = this.state;
+    let components = this.state.store.components;
+    delete components.selected
+
+    // fetch("http://192.168.137.1:5000/import/" + store.imageId, {
+    fetch("http://localhost:5000/import/" + store.imageId, {
+      method: "PUT",
+      body: JSON.stringify({store: components}),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .catch(err => {
+        alert('could\'t send updated data, please make sure you import an image \n or check your internet connection')
+      });
+  }
+
 
   render() {
     let { section, secondryList } = this.state;

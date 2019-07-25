@@ -32,7 +32,8 @@ class TabBar extends React.Component {
         }`
     };
 
-    fetch("http://localhost:5000/graphql", {
+    // fetch("http://localhost:5000/graphql", {
+    fetch("http://192.168.137.1:5000/graphql", {
       method: "POST",
       body: JSON.stringify(requestBody),
       headers: {

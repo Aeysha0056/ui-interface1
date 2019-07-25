@@ -12,7 +12,9 @@ import "./styles/MainPage.css";
 @inject("drawing")
 @observer
 
+
 class Main extends React.Component {
+
   constructor(props) {
     super(props);
 
@@ -20,6 +22,9 @@ class Main extends React.Component {
       image: "",
       ...props
     };
+
+    this.projectId = "5d39acacc3609924e0a5b81f"; // TODO: change it later
+
   }
 
   componentWillMount() {
@@ -35,11 +40,45 @@ class Main extends React.Component {
 
   onImageChange = event => {
     if (event.target.files && event.target.files[0]) {
+
       this.setState({
         image: URL.createObjectURL(event.target.files[0])
       });
+
+      this.getImageId(event.target.files[0].name)
+
     }
   };
+
+  getImageId = imageName => {
+    let requestBody = {
+      projectId: this.projectId,
+      img: imageName,
+      store: {}
+    }
+
+    // create a doc for image in db and save the id
+    // fetch("http://192.168.137.1:5000/import", {
+    fetch("http://localhost:5000/import", {
+      method: "POST",
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(res => {
+        if (!res.ok) {
+          alert('Please check your connection!')
+        }
+        return res.json();
+      })
+      .then(resData => {
+        this.state.store.setImageId(resData.import._id)
+      })
+      .catch(err => {
+        this.setState({ fetching: false, errorMsg: "Something Wrong!" });
+      });
+  }
 
   selectOption = option => {
     let selectedCrop = this.state.store.selected;

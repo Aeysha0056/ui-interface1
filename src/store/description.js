@@ -5,6 +5,7 @@ export default class Discription {
   @observable components = {};
   selected;
   zIndex = 0;
+  imageId;
 
   @action addComponent(y1, x1, w, h, type) {
     let id = uniqid.time();
@@ -48,5 +49,9 @@ export default class Discription {
       this.components[id] = comp;
       //console.log(temp);
     }
+  }
+
+  @action setImageId(id) {
+    this.imageId = id;
   }
 }

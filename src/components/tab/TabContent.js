@@ -61,25 +61,28 @@ class TabContent extends React.Component {
       // main list update
       if (section.type === "single") {
         values[i].clicked = values[i].name === data.name;
-
       } else {
         let index = data.findIndex(item => item.name === values[i].name);
         values[i].clicked = index !== -1;
       }
 
       // secondryList update
-      if (!values[i].view) continue;
-
-      for (var j = 0; j < values[i].view.length; j++) {
-        let a = data.find(item => item.name === values[i].name);
-
-        if (!a || !a.view) {
-          values[i].view[j].clicked = false;
-
-        } else {
-          values[i].view[j].clicked = a.view === values[i].view[j].name;
-        }
-      }
+      // if (!values[i].view) continue;
+      // for (var j = 0; j < values[i].view.length; j++) {
+      //   let item;
+      //
+      //   if (section.type === "single") {
+      //     item = data;
+      //   } else {
+      //     item = data.find(item => item.name === values[i].name);
+      //   }
+      //
+      //   if (!item || !item.view) {
+      //     values[i].view[j].clicked = false;
+      //   } else {
+      //     values[i].view[j].clicked = item.view === values[i].view[j].name;
+      //   }
+      // }
     }
 
     section.values = values;
@@ -113,31 +116,36 @@ class TabContent extends React.Component {
       // only mark the selected item as clicked
       section.values.map((value, i) => {
         value.clicked = i === index;
+        if (i !== index && value.view) {
+          // clear prev clicked
+          value.view.map(v => (v.clicked = false));
+        }
         return { ...value };
       });
 
       this.state.store.update(selectedCropId, "data", {
         [name]: { name: item.name }
       });
-
     } else {
-      // mark the item as cheacked
+      // mark the item as clicked
       section.values[index].clicked = !section.values[index].clicked;
 
       if (section.values[index].clicked) {
-
         // insert item
         if (selectedCropComp.data && selectedCropComp.data[name]) {
-          this.state.store.update(selectedCropId, "data", {
-            [name]: [...selectedCropComp.data[name], { name: item.name }]
+          let selectedCropPrevData = selectedCropComp.data[name];
+          let selectedCropData = _.concat(selectedCropPrevData, {
+            name: item.name
           });
 
+          this.state.store.update(selectedCropId, "data", {
+            [name]: selectedCropData
+          });
         } else {
           this.state.store.update(selectedCropId, "data", {
             [name]: [{ name: item.name }]
           });
         }
-
       } else {
         // remove item from main list
         let data = selectedCropComp.data[name];
@@ -174,30 +182,97 @@ class TabContent extends React.Component {
     let { secondryList, store, section } = this.state;
     let selectedCropId = store.selected;
     let selectedCropComp = store.components[selectedCropId];
+    let name = section.name;
 
-    // mark the selected item as clicked
-    let view = secondryList.view.map((view, i) => {
-      view.clicked = i === index;
-      return { ...view };
-    });
-    secondryList.view = view;
-
-    // find selected crop data
-    let a = selectedCropComp.data[section.name];
-    if (section.type === "single") {
-      this.state.store.update(selectedCropId, "data", {
-        [section.name]: {
-          name: secondryList.name,
-          view: secondryList.view[index].name
-        }
+    if (secondryList.type === "single") {
+      // mark the selected item as clicked
+      let view = secondryList.view.map((view, i) => {
+        view.clicked = i === index;
+        return { ...view };
       });
+      secondryList.view = view;
 
+      if (section.type === "single") {
+        this.state.store.update(selectedCropId, "data", {
+          [section.name]: {
+            name: secondryList.name,
+            view: secondryList.view[index].name
+          }
+        });
+      } else {
+        let arr = selectedCropComp.data[name].map(e => {
+          if (e.name === secondryList.name) {
+            e.view = item.name;
+            return e;
+          }
+          return e;
+        });
+
+        this.state.store.update(selectedCropId, "data", {
+          [section.name]: arr
+        });
+      }
     } else {
-      let i = a.findIndex(item => item.name === secondryList.name);
-      a[i] = { name: secondryList.name, view: secondryList.view[index].name };
-      this.state.store.update(selectedCropId, "data", {
-        [section.name]: a
-      });
+      // mark the item as cheacked
+      secondryList.view[index].clicked = !secondryList.view[index].clicked;
+
+      if (secondryList.view[index].clicked) {
+        if (selectedCropComp.data && selectedCropComp.data[name]) {
+          // update the store data of selected crop based on the type
+
+          if (section.type === "single") {
+            let views = selectedCropComp.data[name].view
+              ? _.concat(
+                  selectedCropComp.data[name].view,
+                  secondryList.view[index].name
+                )
+              : [secondryList.view[index].name];
+
+            this.state.store.update(selectedCropId, "data", {
+              [section.name]: {
+                name: secondryList.name,
+                view: views
+              }
+            });
+          } else {
+            let arr = selectedCropComp.data[name].map(e => {
+              if (e.name === secondryList.name) {
+                let views = e.view ? _.concat(e.view, item.name) : [item.name];
+                e.view = views;
+                return e;
+              }
+              return e;
+            });
+
+            this.state.store.update(selectedCropId, "data", {
+              [section.name]: arr
+            });
+          }
+        }
+      } else {
+        // remove item from view list
+
+        if (section.type === "single") {
+          let data = selectedCropComp.data[name];
+          _.remove(data.view, n => n === item.name);
+          this.state.store.update(selectedCropId, "data", {
+            [section.name]: data
+          });
+
+        } else {
+          let arr = selectedCropComp.data[name].map(e => {
+            if (e.name === secondryList.name) {
+              _.remove(e.view, n => n === item.name);
+              return e;
+            }
+            return e;
+          });
+
+          this.state.store.update(selectedCropId, "data", {
+            [section.name]: arr
+          });
+        }
+      }
     }
 
     this.setState({ secondryList });
@@ -222,21 +297,20 @@ class TabContent extends React.Component {
   sendData = () => {
     let { store } = this.state;
     let components = this.state.store.components;
-    delete components.selected
+    delete components.selected;
 
-    // fetch("http://192.168.137.1:5000/import/" + store.imageId, {
     fetch("http://localhost:5000/import/" + store.imageId, {
       method: "PUT",
-      body: JSON.stringify({store: components}),
+      body: JSON.stringify({ store: components }),
       headers: {
         "Content-Type": "application/json"
       }
-    })
-      .catch(err => {
-        alert('could\'t send updated data, please make sure you import an image \n or check your internet connection')
-      });
-  }
-
+    }).catch(err => {
+      alert(
+        "could't send updated data, please make sure you import an image \n or check your internet connection"
+      );
+    });
+  };
 
   render() {
     let { section, secondryList } = this.state;
@@ -256,9 +330,7 @@ class TabContent extends React.Component {
       <div className="col-11 pt-3">
         {/** main list */}
         <div className="top-section mb-3">
-          <ListTitle
-            text={section.name.toLowerCase() === "types" ? "" : section.name}
-          />
+          <ListTitle text={section.name} />
           <List dense className="list pr-4">
             {section.values.map((item, i) => (
               <Item
@@ -286,7 +358,7 @@ class TabContent extends React.Component {
                   key={i}
                   index={i}
                   item={item}
-                  type="single"
+                  type={secondryList.type}
                   onClick={() => this.updateSecondryList(item, i)}
                   handleCheckBoxChanges={() => this.updateSecondryList(item, i)}
                 />

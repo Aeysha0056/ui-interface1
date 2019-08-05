@@ -12,7 +12,6 @@ import "./styles/MainPage.css";
 @inject("drawing")
 @observer
 
-
 class Main extends React.Component {
 
   constructor(props) {
@@ -58,7 +57,6 @@ class Main extends React.Component {
     }
 
     // create a doc for image in db and save the id
-    // fetch("http://192.168.137.1:5000/import", {
     fetch("http://localhost:5000/import", {
       method: "POST",
       body: JSON.stringify(requestBody),

@@ -1,6 +1,12 @@
 import React from "react";
 
-export default class draw extends React.PureComponent {
+/**
+ * @class
+ */
+class draw extends React.PureComponent {
+  /**
+   * @method
+   */
   render() {
     let style = {
       position: "absolute",
@@ -15,3 +21,5 @@ export default class draw extends React.PureComponent {
     return <div style={style}> </div>;
   }
 }
+
+export default draw

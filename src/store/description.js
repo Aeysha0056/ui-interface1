@@ -1,6 +1,9 @@
 import { observable, action } from "mobx";
 import uniqid from "uniqid";
 
+/**
+ * @class
+ */
 export default class Discription {
   @observable components = {};
   selected;

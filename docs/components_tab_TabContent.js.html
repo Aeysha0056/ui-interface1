@@ -1,4 +1,32 @@
-import React from "react";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/tab/TabContent.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/tab/TabContent.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from "react";
 import { inject, observer } from "mobx-react";
 import { EntypoCheck } from "react-entypo-icons";
 import _ from "lodash";
@@ -56,7 +84,7 @@ class TabContent extends React.Component {
     }
 
     let values = section.values;
-    for (var i = 0; i < values.length; i++) {
+    for (var i = 0; i &lt; values.length; i++) {
       // no prev data
       if (!data) {
         values[i].clicked = false;
@@ -73,7 +101,7 @@ class TabContent extends React.Component {
 
       // secondryList update
       // if (!values[i].view) continue;
-      // for (var j = 0; j < values[i].view.length; j++) {
+      // for (var j = 0; j &lt; values[i].view.length; j++) {
       //   let item;
       //
       //   if (section.type === "single") {
@@ -123,7 +151,7 @@ class TabContent extends React.Component {
       // only mark the selected item as clicked
       section.values.map((value, i) => {
         value.clicked = i === index;
-        if (i !== index && value.view) {
+        if (i !== index &amp;&amp; value.view) {
           // clear prev clicked
           value.view.map(v => (v.clicked = false));
         }
@@ -139,7 +167,7 @@ class TabContent extends React.Component {
 
       if (section.values[index].clicked) {
         // insert item
-        if (selectedCropComp.data && selectedCropComp.data[name]) {
+        if (selectedCropComp.data &amp;&amp; selectedCropComp.data[name]) {
           let selectedCropPrevData = selectedCropComp.data[name];
           let selectedCropData = _.concat(selectedCropPrevData, {
             name: item.name
@@ -226,7 +254,7 @@ class TabContent extends React.Component {
       secondryList.view[index].clicked = !secondryList.view[index].clicked;
 
       if (secondryList.view[index].clicked) {
-        if (selectedCropComp.data && selectedCropComp.data[name]) {
+        if (selectedCropComp.data &amp;&amp; selectedCropComp.data[name]) {
           // update the store data of selected crop based on the type
 
           if (section.type === "single") {
@@ -339,20 +367,20 @@ class TabContent extends React.Component {
     // state section
     if (section.name === "state")
       return (
-        <StateSection
+        &lt;StateSection
           isClicked={section.clicked}
           onClick={() => this.hasState()}
         />
       );
 
     return (
-      <div className="col-11 pt-3">
+      &lt;div className="col-11 pt-3">
         {/** main list */}
-        <div className="top-section mb-3">
-          <ListTitle text={section.name} />
-          <List dense className="list pr-4">
+        &lt;div className="top-section mb-3">
+          &lt;ListTitle text={section.name} />
+          &lt;List dense className="list pr-4">
             {section.values.map((item, i) => (
-              <Item
+              &lt;Item
                 key={i}
                 type={section.type}
                 index={i}
@@ -361,19 +389,19 @@ class TabContent extends React.Component {
                 handleCheckBoxChanges={() => this.mainListHandler(item, i)}
               />
             ))}
-          </List>
-        </div>
+          &lt;/List>
+        &lt;/div>
 
         {/** Secondry list */}
-        {secondryList && secondryList.view && secondryList.view.length !== 0 && (
-          <div className="bottom-section">
-            <div className="row ml-1 justify-content-center align-content-center">
-              <div className="top-border" />
-            </div>
-            <ListTitle text={secondryList.name} />
-            <List dense className="list list-height pr-4 mb-5n">
+        {secondryList &amp;&amp; secondryList.view &amp;&amp; secondryList.view.length !== 0 &amp;&amp; (
+          &lt;div className="bottom-section">
+            &lt;div className="row ml-1 justify-content-center align-content-center">
+              &lt;div className="top-border" />
+            &lt;/div>
+            &lt;ListTitle text={secondryList.name} />
+            &lt;List dense className="list list-height pr-4 mb-5n">
               {secondryList.view.map((item, i) => (
-                <Item
+                &lt;Item
                   key={i}
                   index={i}
                   item={item}
@@ -382,10 +410,10 @@ class TabContent extends React.Component {
                   handleCheckBoxChanges={() => this.secondryListHandler(item, i)}
                 />
               ))}
-            </List>
-          </div>
+            &lt;/List>
+          &lt;/div>
         )}
-      </div>
+      &lt;/div>
     );
   }
 }
@@ -393,18 +421,41 @@ class TabContent extends React.Component {
 export default TabContent;
 
 const StateSection = ({ isClicked, onClick }) => (
-  <div
+  &lt;div
     className="row justify-content-center align-content-center mt-3"
     onClick={onClick}
   >
-    <div className="checkbox">
-      <label>
-        <input type="checkbox" checked={isClicked} onChange={onClick} />
-        <span className="cr">
-          <EntypoCheck className="cr-icon" />
-        </span>
-      </label>
-    </div>
-    <span className="state-text">True or False</span>
-  </div>
+    &lt;div className="checkbox">
+      &lt;label>
+        &lt;input type="checkbox" checked={isClicked} onChange={onClick} />
+        &lt;span className="cr">
+          &lt;EntypoCheck className="cr-icon" />
+        &lt;/span>
+      &lt;/label>
+    &lt;/div>
+    &lt;span className="state-text">True or False&lt;/span>
+  &lt;/div>
 );
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Drag.html">Drag</a></li><li><a href="draw.html">draw</a></li><li><a href="MainPage.html">MainPage</a></li><li><a href="module.exports.html">exports</a></li><li><a href="Resize.html">Resize</a></li><li><a href="TabBar.html">TabBar</a></li><li><a href="TabContent.html">TabContent</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Item">Item</a></li><li><a href="global.html#ListText">ListText</a></li><li><a href="global.html#ListTitle">ListTitle</a></li><li><a href="global.html#OptionText">OptionText</a></li><li><a href="global.html#TabText">TabText</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Wed Aug 07 2019 14:28:35 GMT+0300 (Arabian Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

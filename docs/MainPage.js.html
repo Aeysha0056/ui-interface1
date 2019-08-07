@@ -1,4 +1,32 @@
-import React from "react";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: MainPage.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: MainPage.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from "react";
 import { inject, observer } from "mobx-react";
 
 import Draw from "./components/draw/draw";
@@ -56,7 +84,7 @@ class MainPage extends React.Component {
    * @param  {opject} event
    */
   onImageChange = event => {
-    if (event.target.files && event.target.files[0]) {
+    if (event.target.files &amp;&amp; event.target.files[0]) {
 
       this.setState({
         image: URL.createObjectURL(event.target.files[0])
@@ -122,44 +150,44 @@ class MainPage extends React.Component {
     let selected = this.state.store.components[this.state.store.selected];
 
     return (
-      <div
+      &lt;div
         className="row full-height dark-background"
         style={{ margin: "auto" }}
       >
         {/** Left side Col */}
 
-        <div className="col-8 pt-5">
-          <div className="row justify-content-center align-content-center">
-            <OptionText text="NewCrop" onClick={() => draw("")} />
-            <OptionText
+        &lt;div className="col-8 pt-5">
+          &lt;div className="row justify-content-center align-content-center">
+            &lt;OptionText text="NewCrop" onClick={() => draw("")} />
+            &lt;OptionText
               text="Dynamic"
-              isSelected={selectedCrop && selectedCrop.crop.type === "dynamic"}
+              isSelected={selectedCrop &amp;&amp; selectedCrop.crop.type === "dynamic"}
               onClick={() => this.selectedOption("dynamic")}
             />
-            <OptionText
+            &lt;OptionText
               text="Fixed"
-              isSelected={selectedCrop && selectedCrop.crop.type === "fixed"}
+              isSelected={selectedCrop &amp;&amp; selectedCrop.crop.type === "fixed"}
               onClick={() => this.selectedOption("fixed")}
             />
 
-            <label htmlFor="image-upload" className="col-2 light-creamy-text">
+            &lt;label htmlFor="image-upload" className="col-2 light-creamy-text">
               Import
-            </label>
-            <input
+            &lt;/label>
+            &lt;input
               id="image-upload"
               type="file"
               accept="image/*"
               onChange={this.onImageChange}
             />
-          </div>
-          <div className="row justify-content-center pt-5">
-            {this.state.image && (
-              <img src={this.state.image} alt="img" className="border" />
+          &lt;/div>
+          &lt;div className="row justify-content-center pt-5">
+            {this.state.image &amp;&amp; (
+              &lt;img src={this.state.image} alt="img" className="border" />
             )}
-          </div>
+          &lt;/div>
 
-          <div className={state.draw === true ? "App draw" : "App"}>
-            <Draw
+          &lt;div className={state.draw === true ? "App draw" : "App"}>
+            &lt;Draw
               h={state.h + "px"}
               w={state.w + "px"}
               y1={state.y1 + "px"}
@@ -171,23 +199,46 @@ class MainPage extends React.Component {
               let item = this.state.store.components[key];
 
               return (
-                <Crop
+                &lt;Crop
                   id={item.id}
                   key={item.id}
                   onClick={() => this.setState({ selectedCrop: item })}
                 />
               );
             })}
-          </div>
-        </div>
+          &lt;/div>
+        &lt;/div>
 
         {/** Right side Col: Options Bar */}
-        <div className="col-4 p-0 m-0 pt-5 light-background">
-          <Tabs />
-        </div>
-      </div>
+        &lt;div className="col-4 p-0 m-0 pt-5 light-background">
+          &lt;Tabs />
+        &lt;/div>
+      &lt;/div>
     );
   }
 }
 
 export default MainPage;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Drag.html">Drag</a></li><li><a href="draw.html">draw</a></li><li><a href="MainPage.html">MainPage</a></li><li><a href="module.exports.html">exports</a></li><li><a href="Resize.html">Resize</a></li><li><a href="TabBar.html">TabBar</a></li><li><a href="TabContent.html">TabContent</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Item">Item</a></li><li><a href="global.html#ListText">ListText</a></li><li><a href="global.html#ListTitle">ListTitle</a></li><li><a href="global.html#OptionText">OptionText</a></li><li><a href="global.html#TabText">TabText</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Wed Aug 07 2019 14:28:35 GMT+0300 (Arabian Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -28,7 +28,9 @@ class Drag {
     let { crop } = comp;
     let x = comp.crop.x1 + (e.clientX || e.touches[0].clientX) - this.initialX;
     let y = comp.crop.y1 + (e.clientY || e.touches[0].clientY) - this.initialY;
-    this.props.store.update(this.props.id, "crop", { x1: x, y1: y });
+    let x2 = x + comp.crop.w;
+    let y2 = y + comp.crop.h
+    this.props.store.update(this.props.id, "crop", { x1: x, y1: y, x2: x2, y2: y2 });
 
     this.initialX = e.clientX || e.touches[0].clientX;
     this.initialY = e.clientY || e.touches[0].clientY;

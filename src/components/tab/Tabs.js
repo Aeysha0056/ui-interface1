@@ -65,6 +65,7 @@ class TabBar extends React.Component {
       })
       .catch(err => {
         this.setState({ fetching: false, errorMsg: "Something Wrong!" });
+        console.log(err)
       });
   };
 

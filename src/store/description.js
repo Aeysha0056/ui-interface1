@@ -24,7 +24,9 @@ export default class Discription {
       tlr: 0,
       brr: 0,
       blr: 0,
-      type: type
+      type: type,
+      x2:  x1 + w,
+      y2:  y1 + h
     };
     this.components[id].id = id;
     this.components[id].selected = false;

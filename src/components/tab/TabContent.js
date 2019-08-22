@@ -2,6 +2,13 @@ import React from "react";
 import { inject, observer } from "mobx-react";
 import { EntypoCheck } from "react-entypo-icons";
 import _ from "lodash";
+import {
+  Button,
+  Form,
+  FormGroup,
+  Label,
+  Input,
+} from "reactstrap";
 import List from "@material-ui/core/List";
 
 import { ListTitle, ListText } from "../Text";
@@ -187,31 +194,37 @@ class TabContent extends React.Component {
    * @param  {Object} item
    * @param  {Number} index
    */
-  secondryListHandler = (item, index) => {
+  secondryListHandler = (item, index = null) => {
     let { secondryList, store, section } = this.state;
     let selectedCropId = store.selected;
     let selectedCropComp = store.components[selectedCropId];
     let name = section.name;
 
-    if (secondryList.type === "single") {
+    if (secondryList.type === "single" || secondryList.type === "input") {
+      if(secondryList.type === "single"){
       // mark the selected item as clicked
       let view = secondryList.view.map((view, i) => {
         view.clicked = i === index;
         return { ...view };
       });
       secondryList.view = view;
+    }
+    else {
+      secondryList.input = this.state.input;
+    }
 
       if (section.type === "single") {
         this.state.store.update(selectedCropId, "data", {
           [section.name]: {
             name: secondryList.name,
-            view: secondryList.view[index].name
+            view: secondryList.type ==="input" ? this.state.input : secondryList.view[index].name
           }
         });
+        this.setState({input: ''})//clear the input 
       } else {
         let arr = selectedCropComp.data[name].map(e => {
           if (e.name === secondryList.name) {
-            e.view = item.name;
+            e.view = secondryList.type ==="input" ? this.state.input : item.name;
             return e;
           }
           return e;
@@ -220,6 +233,7 @@ class TabContent extends React.Component {
         this.state.store.update(selectedCropId, "data", {
           [section.name]: arr
         });
+        this.setState({input: ''})//clear the input 
       }
     } else {
       // mark the item as cheacked
@@ -260,6 +274,10 @@ class TabContent extends React.Component {
         }
       } else {
         // remove item from view list
+
+        if(secondryList.type === "input"){
+          secondryList.input = ""
+        }
 
         if (section.type === "single") {
           let data = selectedCropComp.data[name];
@@ -304,6 +322,14 @@ class TabContent extends React.Component {
     });
     this.sendData()
   };
+
+  /**
+ * handling input change
+ */
+  handleInputChanged = (event) => {
+    let name = event.target.name
+    this.setState({ [name]: event.target.value })
+  }
 
   /**
    * send store data to the database
@@ -383,6 +409,33 @@ class TabContent extends React.Component {
                 />
               ))}
             </List>
+          </div>
+        )}
+        {secondryList && secondryList.view && secondryList.view.length === 0 && (
+          <div className="bottom-section">
+            <div className="row ml-1 justify-content-center align-content-center">
+              <div className="top-border" />
+            </div>
+            <ListTitle text={secondryList.name} />
+            {secondryList.clicked && secondryList.input && (
+              <Label className="bold-creamy-text text-input">{secondryList.input}</Label>
+            )};
+            <Form className="list list-height pr-4 mb-5n">
+                  <FormGroup className="input" >
+                    <Input
+                      type="text"
+                      name= "input"
+                      id={secondryList.name}
+                      placeholder="input here"
+                      value = {this.state.input? this.state.input : ''}
+                      onChange= {this.handleInputChanged}
+                    />
+                  </FormGroup>
+                  <Button outline className="button" onClick={() => this.secondryListHandler(secondryList)}>
+                  OK
+              </Button>
+               </Form>
+               
           </div>
         )}
       </div>

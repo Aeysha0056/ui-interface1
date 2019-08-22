@@ -179,6 +179,37 @@ input[type="file"] {
   margin-right: 0.5em;
 }
 
+.button  {
+  position: relative;
+  margin-top: 15px;
+  color: #ac9068;
+  display: inline-block;
+  border: 2px solid #6b4108;
+  background-color: white;
+  border-radius: 0.1em;
+  float: right;
+  margin-left: 0.5em;
+}
+
+.input  {
+  position: relative;
+  margin-top: 15px;
+  display: inline-block;
+  border: 2px solid #6b4108;
+  background-color: white;
+  border-radius: 0.1em;
+  width:14em;
+  height: 2em;
+  float: left;
+  margin-right: 0.5em;
+  margin-left: 1em;
+}
+
+.text-input {
+  margin-left: 1.8em;
+  margin-top: 5px;
+}
+
 .checkbox .cr .cr-icon {
   position: absolute;
   font-size: 1.5em;

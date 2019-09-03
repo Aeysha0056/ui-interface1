@@ -14,6 +14,7 @@ class Drag {
    */
   select = () => {
     this.props.store.select(this.props.id);
+    this.props.store.addParent(this.props.id , this.props.store)
     //this.container.current.addEventListener("mousedown",dragStart,false)
   };
 
@@ -31,6 +32,7 @@ class Drag {
     let x2 = x + comp.crop.w;
     let y2 = y + comp.crop.h
     this.props.store.update(this.props.id, "crop", { x1: x, y1: y, x2: x2, y2: y2 });
+    this.props.store.addParent(this.props.id , this.props.store)
 
     this.initialX = e.clientX || e.touches[0].clientX;
     this.initialY = e.clientY || e.touches[0].clientY;

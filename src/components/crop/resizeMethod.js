@@ -68,6 +68,7 @@ class Resize {
         this.initialX = e.clientX || e.touches[0].clientX;
       }
     }
+    this.props.store.addParent(this.props.id,this.props.store)
   };
 
   /**

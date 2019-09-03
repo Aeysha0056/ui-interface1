@@ -1,5 +1,6 @@
 import { observable, action } from "mobx";
 import uniqid from "uniqid";
+import { thisExpression } from "@babel/types";
 
 /**
  * @class
@@ -31,6 +32,7 @@ export default class Discription {
     this.components[id].id = id;
     this.components[id].selected = false;
     this.components[id].crop = obj;
+    //this.components[id].parent = 0;
     this.zIndex++;
   }
 
@@ -53,10 +55,71 @@ export default class Discription {
       comp[key] = temp;
       this.components[id] = comp;
       //console.log(temp);
+            console.log(this.components);
     }
   }
 
   @action setImageId(id) {
     this.imageId = id;
+  }
+
+  @action addParent(id, store) {
+
+    let currentComp = this.components[id]
+    //if the current component is the root (main screen container)
+    if (currentComp.crop.z === 0) {
+      currentComp.crop.parent = 0
+    }
+    else {
+      console.log(store.components)
+      let comps = store.components
+      for (var key in comps) {
+        let start = currentComp.crop.x1 > comps[key].crop.x1 && currentComp.crop.y1 > comps[key].crop.y1
+        let end = currentComp.crop.x2 < comps[key].crop.x2 && currentComp.crop.y2 < comps[key].crop.y2
+        let parentHeight = comps[key].crop.h * comps[key].crop.w
+        let childHeight = currentComp.crop.h * currentComp.crop.w
+
+        if (start && end) {//general case (child inside the parent)
+          currentComp.crop.parent = comps[key].id
+        }
+        else if ((currentComp.crop.x1 < comps[key].crop.x1 && currentComp.crop.y1 < comps[key].crop.y1) &&
+          (currentComp.crop.x2 < comps[key].crop.x2 && currentComp.crop.y2 < comps[key].crop.y2)) {
+
+          if (parentHeight > childHeight) {
+          //if (!currentComp.crop.parent) { 
+          currentComp.crop.parent = comps[key].id
+           }
+          //}
+        }
+        else if ((currentComp.crop.x1 < comps[key].crop.x1 && currentComp.crop.y1 > comps[key].crop.y1) &&
+          (currentComp.crop.x2 < comps[key].crop.x2 && currentComp.crop.y2 > comps[key].crop.y2)) {
+
+          if (parentHeight > childHeight) {
+           // if (!currentComp.crop.parent) { 
+          currentComp.crop.parent = comps[key].id
+          }
+           // }
+        }
+
+        else if ((currentComp.crop.x1 > comps[key].crop.x1 && currentComp.crop.y1 < comps[key].crop.y1) &&
+          (currentComp.crop.x2 > comps[key].crop.x2 && currentComp.crop.y2 < comps[key].crop.y2)) {
+          if (parentHeight > childHeight) {
+            //if (!currentComp.crop.parent) { 
+          currentComp.crop.parent = comps[key].id
+          }
+            //}
+        }
+
+        else if ((currentComp.crop.x1 > comps[key].crop.x1 && currentComp.crop.y1 > comps[key].crop.y1) &&
+          (currentComp.crop.x2 > comps[key].crop.x2 && currentComp.crop.y2 > comps[key].crop.y2)) {
+          if (parentHeight > childHeight) {
+            //if (!currentComp.crop.parent) { 
+          currentComp.crop.parent = comps[key].id
+          }
+            //}
+        }
+
+      }
+    }
   }
 }

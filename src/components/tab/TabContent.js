@@ -32,6 +32,7 @@ class TabContent extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    console.log(nextProps)
     let { section } = nextProps.selectedTab;
     this.sectionDataHandler(section);
   }
